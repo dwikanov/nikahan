@@ -36,6 +36,12 @@
             margin-top: 20px;
             font-size: 16px;
         }
+        .countdown {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e91e63;
+            margin-top: 20px;
+        }
         .footer {
             margin-top: 30px;
             font-size: 14px;
@@ -49,11 +55,12 @@
         <div class="invitee" id="invitee-name">[Nama Penerima]</div>
         <div class="details">
             <p>Anda diundang untuk menghadiri acara spesial kami!</p>
-            <p>Waktu: Minggu, 12 Januari 2025, 09:00 WIB</p>
-            <p>Tempat: Tanahg Kita Wetan Ndeso</p>
+            <p>Waktu: Minggu, 12 Januari 2025, 18:00 WIB</p>
+            <p>Tempat: Tanah Kita Wetan Ndweso</p>
         </div>
+        <div class="countdown" id="countdown">00d 00h 00m 00s</div>
         <div class="footer">
-            <p>Harap konfirmasi kehadiran Anda melalui telepon atau WA.</p>
+            <p>Harap konfirmasi kehadiran Anda melalui telepon atau email.</p>
             <p>Kami berharap dapat bertemu Anda di acara ini!</p>
         </div>
     </div>
@@ -75,15 +82,38 @@
             // Find the invitee in the JSON file
             const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
             if (invitee) {
-                // Display the invitee name from the URL
                 document.getElementById('invitee-name').textContent = inviteeName;
             } else {
                 document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
             }
         }
 
-        // Call the function to load invitee names
+        // Countdown Timer
+        function startCountdown() {
+            const eventDate = new Date('January 12, 2025 18:00:00 GMT+07:00').getTime();
+            const countdownElement = document.getElementById('countdown');
+
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    countdownElement.textContent = 'Acara telah dimulai!';
+                }
+            }, 1000);
+        }
+
+        // Call the functions to load invitee names and start the countdown timer
         loadInviteeNames();
+        startCountdown();
     </script>
 </body>
 </html>
