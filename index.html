@@ -75,7 +75,8 @@
             // Find the invitee in the JSON file
             const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
             if (invitee) {
-                document.getElementById('invitee-name').textContent = invitee['Invitee Name']);
+                // Replace [Nama Penerima] with the invitee name, converting '+' back to spaces
+                document.getElementById('invitee-name').textContent = invitee['Invitee Name'].replace(/\+/g, ' ');
             } else {
                 document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
             }
