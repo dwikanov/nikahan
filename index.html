@@ -72,16 +72,18 @@
             return decodeURIComponent(urlParams.get('name'));
         }
 
-        // Function to load invitee names from the JSON file hosted on a server
+        // Function to load invitee names from Google Sheets
         async function loadInviteeNames() {
-            const url = 'https://dwikanov.github.io/nikahan/invitees.json';
+            const sheetId = '1wxOEMuokDiJNWpJpuirEJRX4GMHM10SA2iQqacSc0LY'; // Your Spreadsheet ID
+            const apiKey = 'your_api_key'; // Replace with your API key
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A:A?key=${apiKey}`;
             const response = await fetch(url);
-            const invitees = await response.json();
+            const data = await response.json();
+            const invitees = data.values.flat();
             const inviteeName = getInviteeName();
 
-            // Find the invitee in the JSON file
-            const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
-            if (invitee) {
+            // Find the invitee in the Google Sheets data
+            if (invitees.includes(inviteeName)) {
                 document.getElementById('invitee-name').textContent = inviteeName;
             } else {
                 document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
