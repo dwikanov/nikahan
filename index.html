@@ -67,7 +67,7 @@
 
         // Function to load invitee names from the JSON file hosted on a server
         async function loadInviteeNames() {
-            const url = 'http://yourusername.github.io/yourrepository/invitees.json';
+            const url = 'https://dwikanov.github.io/nikahan/invitees.json';
             const response = await fetch(url);
             const invitees = await response.json();
             const inviteeName = getInviteeName();
