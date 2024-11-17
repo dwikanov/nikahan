@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotak Kritik dan Saran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #4caf50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .form-group button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .feedback-list {
+            margin-top: 30px;
+        }
+        .feedback-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Kotak Kritik dan Saran</h2>
+        <div class="form-group">
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" required>
+        </div>
+        <div class="form-group">
+            <label for="alamat">Alamat:</label>
+            <input type="text" id="alamat" required>
+        </div>
+        <div class="form-group">
+            <label for="saran">Saran:</label>
+            <textarea id="saran" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <button onclick="submitFeedback()">Kirim</button>
+        </div>
+        <div class="feedback-list" id="feedback-list">
+            <!-- Data akan ditampilkan di sini -->
+        </div>
+    </div>
+
+    <script>
+        const sheetId = '1wxOEMuokDiJNWpJpuirEJRX4GMHM10SA2iQqacSc0LY';
+        const apiKey = 'AIzaSyASwNtUu_oMDjC8Q9nb4zYMxQQSdkAY4tk';
+
+        async function submitFeedback() {
+            const nama = document.getElementById('nama').value;
+            const alamat = document.getElementById('alamat').value;
+            const saran = document.getElementById('saran').value;
+
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1:append?valueInputOption=USER_ENTERED&key=${apiKey}`;
+            const data = {
+                values: [[nama, alamat, saran]]
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Kritik dan saran berhasil dikirim!');
+                loadFeedback();
+            } else {
+                alert('Gagal mengirim kritik dan saran.');
+            }
+        }
+
+        async function loadFeedback() {
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            const feedbackList = document.getElementById('feedback-list');
+            feedbackList.innerHTML = '';
+
+            data.values.forEach(row => {
+                const feedbackItem = document.createElement('div');
+                feedbackItem.className = 'feedback-item';
+                feedbackItem.innerHTML = `<strong>Nama:</strong> ${row[0]}<br>
+                                          <strong>Alamat:</strong> ${row[1]}<br>
+                                          <strong>Saran:</strong> ${row[2]}`;
+                feedbackList.appendChild(feedbackItem);
+            });
+        }
+
+        // Load feedback on page load
+        loadFeedback();
+    </script>
+</body>
+</html>
