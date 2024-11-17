@@ -75,7 +75,7 @@
         // Function to load invitee names from Google Sheets
         async function loadInviteeNames() {
             const sheetId = '1wxOEMuokDiJNWpJpuirEJRX4GMHM10SA2iQqacSc0LY'; // Your Spreadsheet ID
-            const apiKey = 'your_api_key'; // Replace with your API key
+            const apiKey = 'AIzaSyASwNtUu_oMDjC8Q9nb4zYMxQQSdkAY4tk'; // Replace with your API key
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A:A?key=${apiKey}`;
             const response = await fetch(url);
             const data = await response.json();
