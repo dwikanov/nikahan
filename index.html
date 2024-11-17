@@ -62,7 +62,7 @@
         // Function to get the invitee name from the URL and decode spaces
         function getInviteeName() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('name').replace(/\+/g, ' ');
+            return decodeURIComponent(urlParams.get('name').replace(/\+/g, ' '));
         }
 
         // Function to load invitee names from the JSON file hosted on a server
