@@ -75,7 +75,7 @@
             // Find the invitee in the JSON file
             const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
             if (invitee) {
-                document.getElementById('invitee-name').textContent = invitee['Invitee Name'].replace(/\+/g, ' ');
+                document.getElementById('invitee-name').textContent = invitee['Invitee Name'].replace(/\%20/g, ' ');
             } else {
                 document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
             }
