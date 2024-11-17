@@ -59,15 +59,15 @@
     </div>
 
     <script>
-        // Function to get the invitee name from the URL
+        // Function to get the invitee name from the URL and decode spaces
         function getInviteeName() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('name');
+            return urlParams.get('name').replace(/\+/g, ' ');
         }
 
         // Function to load invitee names from the JSON file hosted on a server
         async function loadInviteeNames() {
-            const url = 'https://dwikanov.github.io/nikahan/invitees.json';
+            const url = 'http://yourusername.github.io/yourrepository/invitees.json';
             const response = await fetch(url);
             const invitees = await response.json();
             const inviteeName = getInviteeName();
