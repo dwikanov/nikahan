@@ -60,8 +60,8 @@
 
     <script>
         function getInviteeName() {
-            const urlParts = window.location.pathname.split('/');
-            return urlParts[urlParts.length - 1];
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('name');
         }
 
         async function loadInviteeNames() {
