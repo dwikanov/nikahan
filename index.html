@@ -59,16 +59,20 @@
     </div>
 
     <script>
+        // Function to get the invitee name from the URL
         function getInviteeName() {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('name');
         }
 
+        // Function to load invitee names from the JSON file hosted on a server
         async function loadInviteeNames() {
-            const response = await fetch('invitees.json');
+            const url = 'https://dwikanov.github.io/nikahan/invitees.json';
+            const response = await fetch(url);
             const invitees = await response.json();
             const inviteeName = getInviteeName();
 
+            // Find the invitee in the JSON file
             const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
             if (invitee) {
                 document.getElementById('invitee-name').textContent = invitee['Invitee Name'];
@@ -77,6 +81,7 @@
             }
         }
 
+        // Call the function to load invitee names
         loadInviteeNames();
     </script>
 </body>
