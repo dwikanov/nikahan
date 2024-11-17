@@ -98,37 +98,51 @@
                 values: [[nama, alamat, saran]]
             };
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
 
-            if (response.ok) {
-                alert('Kritik dan saran berhasil dikirim!');
-                loadFeedback();
-            } else {
-                alert('Gagal mengirim kritik dan saran.');
+                if (response.ok) {
+                    alert('Kritik dan saran berhasil dikirim!');
+                    loadFeedback();
+                } else {
+                    throw new Error(`Gagal mengirim kritik dan saran: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal mengirim kritik dan saran. Periksa konsol untuk detail lebih lanjut.');
             }
         }
 
         async function loadFeedback() {
             const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const feedbackList = document.getElementById('feedback-list');
-            feedbackList.innerHTML = '';
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const feedbackList = document.getElementById('feedback-list');
+                feedbackList.innerHTML = '';
 
-            data.values.forEach(row => {
-                const feedbackItem = document.createElement('div');
-                feedbackItem.className = 'feedback-item';
-                feedbackItem.innerHTML = `<strong>Nama:</strong> ${row[0]}<br>
-                                          <strong>Alamat:</strong> ${row[1]}<br>
-                                          <strong>Saran:</strong> ${row[2]}`;
-                feedbackList.appendChild(feedbackItem);
-            });
+                if (data.values) {
+                    data.values.forEach(row => {
+                        const feedbackItem = document.createElement('div');
+                        feedbackItem.className = 'feedback-item';
+                        feedbackItem.innerHTML = `<strong>Nama:</strong> ${row[0]}<br>
+                                                <strong>Alamat:</strong> ${row[1]}<br>
+                                                <strong>Saran:</strong> ${row[2]}`;
+                        feedbackList.appendChild(feedbackItem);
+                    });
+                } else {
+                    feedbackList.innerHTML = '<p>Belum ada kritik dan saran yang diterima.</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal memuat kritik dan saran. Periksa konsol untuk detail lebih lanjut.');
+            }
         }
 
         // Load feedback on page load
