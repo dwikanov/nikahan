@@ -59,10 +59,10 @@
     </div>
 
     <script>
-        // Function to get the invitee name from the URL and retain the + for matching
+        // Function to get the invitee name from the URL and decode spaces
         function getInviteeName() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('name'); // No need to decode '+'
+            return decodeURIComponent(urlParams.get('name'));
         }
 
         // Function to load invitee names from the JSON file hosted on a server
@@ -75,8 +75,7 @@
             // Find the invitee in the JSON file
             const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
             if (invitee) {
-                // Replace [Nama Penerima] with the invitee name, converting '+' back to spaces
-                document.getElementById('invitee-name').textContent = invitee['Invitee Name']);
+                document.getElementById('invitee-name').textContent = invitee['Invitee Name'];
             } else {
                 document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
             }
