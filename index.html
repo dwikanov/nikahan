@@ -60,11 +60,24 @@
 
     <script>
         function getInviteeName() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('name');
+            const urlParts = window.location.pathname.split('/');
+            return urlParts[urlParts.length - 1];
         }
 
-        document.getElementById('invitee-name').textContent = getInviteeName() || 'Nama tidak ditemukan';
+        async function loadInviteeNames() {
+            const response = await fetch('invitees.json');
+            const invitees = await response.json();
+            const inviteeName = getInviteeName();
+
+            const invitee = invitees.find(i => i['Invitee Name'] === inviteeName);
+            if (invitee) {
+                document.getElementById('invitee-name').textContent = invitee['Invitee Name'];
+            } else {
+                document.getElementById('invitee-name').textContent = 'Nama tidak ditemukan';
+            }
+        }
+
+        loadInviteeNames();
     </script>
 </body>
 </html>
