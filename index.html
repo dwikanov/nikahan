@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Spesial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .invitee {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff5722;
+        }
+        .details {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Undangan Spesial</div>
+        <div class="invitee" id="invitee-name">[Nama Penerima]</div>
+        <div class="details">
+            <p>Anda diundang untuk menghadiri acara spesial kami!</p>
+            <p>Waktu: Sabtu, 24 Desember 2024, 18:00 WIB</p>
+            <p>Tempat: Hotel Mulia, Jakarta</p>
+        </div>
+        <div class="footer">
+            <p>Harap konfirmasi kehadiran Anda melalui telepon atau email.</p>
+            <p>Kami berharap dapat bertemu Anda di acara ini!</p>
+        </div>
+    </div>
+
+    <script>
+        function getInviteeName() {
+            const urlParts = window.location.pathname.split('/');
+            return urlParts[urlParts.length - 1];
+        }
+
+        document.getElementById('invitee-name').textContent = getInviteeName();
+    </script>
+</body>
+</html>
