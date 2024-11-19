@@ -85,63 +85,112 @@
     </div>
 
     <script>
-        const sheetId = '1yOHD72JFD7P1XyAUV6w2hnxSj8-pHEcSAb4VXra7Wsw';
-        const apiKey = 'AIzaSyASwNtUu_oMDjC8Q9nb4zYMxQQSdkAY4tk';
+        const username = 'dwikanov'; // Ganti dengan username GitHub Anda
+        const repo = 'nikahan'; // Ganti dengan nama repository Anda
+        const token = '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'; // Ganti dengan token akses pribadi GitHub Anda
 
         async function submitFeedback() {
             const nama = document.getElementById('nama').value;
             const alamat = document.getElementById('alamat').value;
             const saran = document.getElementById('saran').value;
+            const waktu = new Date().toLocaleString();
 
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1:append?valueInputOption=USER_ENTERED&key=${apiKey}`;
-            const data = {
-                values: [[nama, alamat, saran]]
-            };
+            if (nama && alamat && saran) {
+                let data = { nama, alamat, saran, waktu };
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
+                let feedbackList = localStorage.getItem('feedbackList');
+                feedbackList = feedbackList ? JSON.parse(feedbackList) : [];
+                feedbackList.push(data);
+
+                const content = btoa(JSON.stringify(feedbackList, null, 2)); // Base64 encode content
+                console.log('Encoded content:', content);
+
+                const path = `data/${nama.replace(/\s+/g, '_').toLowerCase()}.json`; // Nama file sesuai dengan nama pengirim
+                console.log('File path:', path);
+
+                const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`, {
+                    method: 'PUT',
                     headers: {
+                        'Authorization': `token ${token}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({
+                        message: `Menambahkan saran baru oleh ${nama}`,
+                        content: content,
+                        sha: await getFileSHA(path)
+                    })
                 });
 
                 if (response.ok) {
                     alert('Kritik dan saran berhasil dikirim!');
-                    loadFeedback();
+                    addFeedbackToList(data, true);
                 } else {
-                    throw new Error(`Gagal mengirim kritik dan saran: ${response.statusText}`);
+                    const result = await response.json();
+                    console.log('Error response:', result);
+                    alert(`Gagal mengirim kritik dan saran: ${result.message}`);
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal mengirim kritik dan saran. Periksa konsol untuk detail lebih lanjut.');
+            } else {
+                alert('Mohon isi semua field sebelum mengirim.');
+            }
+        }
+
+        async function getFileSHA(path) {
+            const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${path}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                return result.sha;
+            }
+
+            return null; // File tidak ada atau terjadi error
+        }
+
+        function addFeedbackToList(feedback, prepend = false) {
+            const feedbackList = document.getElementById('feedback-list');
+            const feedbackItem = document.createElement('div');
+            feedbackItem.className = 'feedback-item';
+            feedbackItem.innerHTML = `<strong>Nama:</strong> ${feedback.nama}<br>
+                                      <strong>Alamat:</strong> ${feedback.alamat}<br>
+                                      <strong>Saran:</strong> ${feedback.saran}<br>
+                                      <strong>Waktu:</strong> ${feedback.waktu}`;
+            if (prepend) {
+                feedbackList.prepend(feedbackItem);
+            } else {
+                feedbackList.appendChild(feedbackItem);
             }
         }
 
         async function loadFeedback() {
-            const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                const feedbackList = document.getElementById('feedback-list');
-                feedbackList.innerHTML = '';
+            const feedbackList = document.getElementById('feedback-list');
+            feedbackList.innerHTML = '';
 
-                if (data.values) {
-                    data.values.forEach(row => {
-                        const feedbackItem = document.createElement('div');
-                        feedbackItem.className = 'feedback-item';
-                        feedbackItem.innerHTML = `<strong>Nama:</strong> ${row[0]}<br>
-                                                <strong>Alamat:</strong> ${row[1]}<br>
-                                                <strong>Saran:</strong> ${row[2]}`;
-                        feedbackList.appendChild(feedbackItem);
-                    });
-                } else {
-                    feedbackList.innerHTML = '<p>Belum ada kritik dan saran yang diterima.</p>';
+            // Fetch file list from GitHub
+            const response = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/data`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${token}`
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal memuat kritik dan saran. Periksa konsol untuk detail lebih lanjut.');
+            });
+
+            if (response.ok) {
+                const files = await response.json();
+                for (let file of files) {
+                    if (file.type === 'file' && file.name.endsWith('.json')) {
+                        const fileResponse = await fetch(file.download_url);
+                        const feedback = await fileResponse.json();
+
+                        feedback.reverse().forEach(item => {
+                            addFeedbackToList(item);
+                        });
+                    }
+                }
+            } else {
+                feedbackList.innerHTML = '<p>Belum ada kritik dan saran yang diterima.</p>';
             }
         }
 
